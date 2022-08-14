@@ -70,5 +70,7 @@ conn ikev2-vpn
 echo -e ": RSA "server-key.pem"
 $username : EAP \"$password\"" > ./ipsec/ipsec.secrets
 
+cp -r ./pki/* /etc/ipsec.d/
+cp ./ipsec/* /etc/
 
 /usr/sbin/ipsec start --nofork
