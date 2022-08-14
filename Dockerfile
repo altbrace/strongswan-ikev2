@@ -9,8 +9,10 @@ RUN apt-get update && apt-get install -y \
 COPY ./run.sh /opt/run.sh
 RUN chmod 755 /opt/run.sh
 
-VOLUME /etc/ipsec.d/
+VOLUME /etc/pki/
 VOLUME /etc/ipsec/
+
+RUN cp -r /etc/pki/* /etc/ipsec.d/
 
 EXPOSE 500/udp 4500/udp
 
