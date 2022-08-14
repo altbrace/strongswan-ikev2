@@ -71,3 +71,4 @@ echo -e ": RSA "server-key.pem"
 $username : EAP \"$password\"" > ./ipsec/ipsec.secrets
 
 
+/usr/sbin/ipsec start --nofork

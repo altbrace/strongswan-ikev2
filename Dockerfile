@@ -6,13 +6,12 @@ RUN apt-get update && apt-get install -y \
     libcharon-extra-plugins \
     libcharon-extauth-plugins 
 
-ADD run.sh ./run.sh
-
-RUN ./run.sh
+COPY ./run.sh /opt/run.sh
+RUN chmod 755 /opt/run.sh
 
 VOLUME /etc/ipsec.d/
 VOLUME /etc/ipsec/
 
 EXPOSE 500/udp 4500/udp
 
-ENTRYPOINT /usr/sbin/ipsec start --nofork
+CMD /opt/run.sh
