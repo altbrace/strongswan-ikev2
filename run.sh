@@ -78,4 +78,4 @@ cp ./ipsec/* /etc/
 mkdir /out
 cp ./pki/cacerts/ca-cert.pem /out/
 
-systemctl restart strongswan-starter
+/usr/sbin/ipsec start --nofork --nolog
