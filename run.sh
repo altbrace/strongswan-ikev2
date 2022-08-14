@@ -75,4 +75,7 @@ $username : EAP \"$password\"" > ./ipsec/ipsec.secrets
 cp -r ./pki/* /etc/ipsec.d/
 cp ./ipsec/* /etc/
 
+mkdir /out
+cp ./pki/cacerts/ca-cert.pem /out/
+
 systemctl restart strongswan-starter
