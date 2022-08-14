@@ -1,3 +1,5 @@
+#!/bin/bash
+
 read -p "Enter your external IP address: " external_ip
 read -p "Do you want to generate CA and server certificates automatically? (Y/N): " generate_certs
 if [[ $generate_certs == [yY] || $generate_certs == [yY][eE][sS] ]]
