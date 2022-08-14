@@ -75,7 +75,7 @@ $username : EAP \"$password\"" > ./ipsec/ipsec.secrets
 cp -r ./pki/* /etc/ipsec.d/
 cp ./ipsec/* /etc/
 
-mkdir /out
-cp ./pki/cacerts/ca-cert.pem /out/
+mkdir /output
+cp ./pki/cacerts/ca-cert.pem /output/
 
-/usr/sbin/ipsec start --nofork --nolog
+service ipsec start >/dev/null 2>&1
