@@ -75,4 +75,4 @@ $username : EAP \"$password\"" > ./ipsec/ipsec.secrets
 cp -r ./pki/* /etc/ipsec.d/
 cp ./ipsec/* /etc/
 
-/usr/sbin/ipsec start --nofork
+/usr/sbin/ipsec start --nofork --daemon
