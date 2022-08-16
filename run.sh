@@ -29,7 +29,7 @@ then
         --flag serverAuth --flag ikeIntermediate --outform pem \
     >  ./pki/certs/server-cert.pem
 
-    echo -e "Certificates generated in ./pki/\n"
+    echo -e "Certificates generated. Grab your 'ca-cert.pem' file in the current directory.\n\n"
 
 fi
 
@@ -75,9 +75,9 @@ $username : EAP \"$password\"" > ./ipsec/ipsec.secrets
 cp -r ./pki/* /etc/ipsec.d/
 cp ./ipsec/* /etc/
 
-mkdir /cacert
+mkdir /cacert 2>/dev/null
 cp ./pki/cacerts/ca-cert.pem /cacert/
-
+echo -p "ipsec configs generated.\n"
 NET_IFACE=$(route 2>/dev/null | grep -m 1 '^default' | grep -o '[^ ]*$')
 
 sysctl -e -q -w net.ipv4.ip_forward=1 2>/dev/null
@@ -91,4 +91,5 @@ iptables -t mangle -A FORWARD --match policy --pol ipsec --dir in -s 10.10.10.0/
 iptables -t filter -A FORWARD --match policy --pol ipsec --dir in --proto esp -s 10.10.10.0/24 -j ACCEPT
 iptables -t filter -A FORWARD --match policy --pol ipsec --dir out --proto esp -d 10.10.10.0/24 -j ACCEPT
 
+echo "iptables rules added. Starting up.\n\n"
 /usr/sbin/ipsec start --nofork
