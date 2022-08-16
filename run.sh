@@ -78,7 +78,7 @@ cp ./ipsec/* /etc/
 mkdir /cacert
 cp ./pki/cacerts/ca-cert.pem /cacert/
 
-NET_IFACE = $(route 2>/dev/null | grep -m 1 '^default' | grep -o '[^ ]*$')
+NET_IFACE=$(route 2>/dev/null | grep -m 1 '^default' | grep -o '[^ ]*$')
 
 sysctl -e -q -w net.ipv4.ip_forward=1 2>/dev/null
 sysctl -e -q -w net/ipv4/conf/all/accept_redirects=0 2> /dev/null
