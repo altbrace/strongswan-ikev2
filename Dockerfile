@@ -5,7 +5,8 @@ RUN apt-get update && apt-get install -y \
     strongswan-pki \
     libcharon-extra-plugins \
     libcharon-extauth-plugins \
-    iptables
+    iptables \
+    net-tools
 
 COPY ./run.sh /opt/run.sh
 RUN chmod 755 /opt/run.sh
