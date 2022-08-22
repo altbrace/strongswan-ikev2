@@ -85,11 +85,28 @@ sysctl -e -q -w net/ipv4/conf/all/accept_redirects=0 2> /dev/null
 sysctl -e -q -w net/ipv4/conf/all/send_redirects=0 2> /dev/null
 sysctl -e -q -w net/ipv4/ip_no_pmtu_disc=1 2> /dev/null
 
-iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o "$NET_IFACE" --match policy --pol ipsec --dir out -j ACCEPT
-iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o "$NET_IFACE" -j MASQUERADE
-iptables -t mangle -A FORWARD --match policy --pol ipsec --dir in -s 10.10.10.0/24 -o "$NET_IFACE" -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1361:1536 -j TCPMSS --set-mss 1360
-iptables -t filter -A FORWARD --match policy --pol ipsec --dir in --proto esp -s 10.10.10.0/24 -j ACCEPT
-iptables -t filter -A FORWARD --match policy --pol ipsec --dir out --proto esp -d 10.10.10.0/24 -j ACCEPT
+# iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o "$NET_IFACE" --match policy --pol ipsec --dir out -j ACCEPT
+# iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o "$NET_IFACE" -j MASQUERADE
+# iptables -t mangle -A FORWARD --match policy --pol ipsec --dir in -s 10.10.10.0/24 -o "$NET_IFACE" -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1361:1536 -j TCPMSS --set-mss 1360
+# iptables -t filter -A FORWARD --match policy --pol ipsec --dir in --proto esp -s 10.10.10.0/24 -j ACCEPT
+# iptables -t filter -A FORWARD --match policy --pol ipsec --dir out --proto esp -d 10.10.10.0/24 -j ACCEPT
 
-echo "iptables rules added. Starting up.\n\n"
+nft flush ruleset
+
+nft add table ip nat
+nft add chain ip nat postrouting {type nat hook postrouting priority 100 \;}
+nft add rule ip nat postrouting ip saddr 10.10.10.0/24 oif "$NET_IFACE" ipsec out accept
+nft add rule ip nat postrouting ip saddr 10.10.10.0/24 oif "$NET_IFACE" masquerade
+
+nft add table ip mangle
+nft add chain mangle forward {type filter hook forward priority -150 \;}
+nft add rule ip mangle forward ip saddr 10.10.10.0/24 oif "$NET_IFACE" ipsec in tcp flags & (syn|rst) == syn \
+tcp option maxseg size 1361-1536 tcp option maxseg size set 1360
+
+nft add table ip filter
+nft add chain filter forward {type filter hook forward priority 0 \; policy drop \;}
+nft add rule ip filter forward ip saddr 10.10.10.0/24 ipsec in protocol { ah, esp } counter accept
+nft add rule ip filter forward ip daddr 10.10.10.0/24 ipsec out protocol { ah, esp } counter accept
+
+echo "nftables rules added. Starting up.\n\n"
 /usr/sbin/ipsec start --nofork

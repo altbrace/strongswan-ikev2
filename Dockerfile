@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     libcharon-extra-plugins \
     libcharon-extauth-plugins \
     iptables \
+    nftables \
     net-tools
 
 COPY ./run.sh /opt/run.sh
