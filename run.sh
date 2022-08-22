@@ -77,7 +77,7 @@ cp ./ipsec/* /etc/
 
 mkdir /cacert 2>/dev/null
 cp ./pki/cacerts/ca-cert.pem /cacert/
-echo -p "ipsec configs generated.\n"
+echo -e "ipsec configs generated.\n"
 NET_IFACE=$(route 2>/dev/null | grep -m 1 '^default' | grep -o '[^ ]*$')
 
 sysctl -e -q -w net.ipv4.ip_forward=1 2>/dev/null
@@ -107,5 +107,5 @@ nft add chain ip filter forward {type filter hook forward priority 0 \;}
 nft add rule ip filter forward ip protocol esp ip saddr 10.10.10.0/24 counter accept
 nft add rule ip filter forward ip protocol esp ip daddr 10.10.10.0/24 counter accept
 
-echo "nftables rules added. Starting up.\n\n"
+echo -e "nftables rules added. Starting up.\n\n"
 /usr/sbin/ipsec start --nofork
