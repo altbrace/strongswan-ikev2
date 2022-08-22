@@ -95,18 +95,17 @@ nft flush ruleset
 
 nft add table ip nat
 nft add chain ip nat postrouting {type nat hook postrouting priority 100 \;}
-nft add rule ip nat postrouting ip saddr 10.10.10.0/24 oif "$NET_IFACE" ipsec out accept
+nft add rule ip nat postrouting oif "$NET_IFACE" ipsec out ip saddr 10.10.10.0/24 accept
 nft add rule ip nat postrouting ip saddr 10.10.10.0/24 oif "$NET_IFACE" masquerade
 
 nft add table ip mangle
-nft add chain mangle forward {type filter hook forward priority -150 \;}
-nft add rule ip mangle forward ip saddr 10.10.10.0/24 oif "$NET_IFACE" ipsec in tcp flags & (syn|rst) == syn \
-tcp option maxseg size 1361-1536 tcp option maxseg size set 1360
+nft add chain ip mangle forward {type filter hook forward priority \ -150 \;}
+nft add rule ip mangle forward oif "$NET_IFACE" ipsec in ip saddr 10.10.10.0/24 tcp flags \& \(syn\|rst\) \=\= syn tcp option maxseg size 1361-1536 tcp option maxseg size set 1360
 
 nft add table ip filter
-nft add chain filter forward {type filter hook forward priority 0 \; policy drop \;}
-nft add rule ip filter forward ip saddr 10.10.10.0/24 ipsec in protocol { ah, esp } counter accept
-nft add rule ip filter forward ip daddr 10.10.10.0/24 ipsec out protocol { ah, esp } counter accept
+nft add chain ip filter forward {type filter hook forward priority 0 \;}
+nft add rule ip filter forward ip protocol esp ip saddr 10.10.10.0/24 counter accept
+nft add rule ip filter forward ip protocol esp ip daddr 10.10.10.0/24 counter accept
 
 echo "nftables rules added. Starting up.\n\n"
 /usr/sbin/ipsec start --nofork
