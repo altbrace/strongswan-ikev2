@@ -10,6 +10,7 @@ then
         exit
     fi
     read -p "Enter CN (common name) of the CA certificate: " CA_CN
+    read -p "Enter your domain name for the server certificate: " domain_name
     echo -e "Generating certificates...\n"
 
     mkdir -p ./pki/{cacerts,certs,private}
@@ -25,7 +26,7 @@ then
     | pki --issue --lifetime 1825 \
         --cacert ./pki/cacerts/ca-cert.pem \
         --cakey ./pki/private/ca-key.pem \
-        --dn "CN=$external_ip" --san @$external_ip --san $external_ip \
+        --dn "CN=$domain_name" --san @$external_ip --san $domain_name \
         --flag serverAuth --flag ikeIntermediate --outform pem \
     >  ./pki/certs/server-cert.pem
 
