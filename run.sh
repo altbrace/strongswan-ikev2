@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -f .run-flag ]; then
+    echo -e "System is already configured. Starting...\n"
+    echo -e "You can find your credentials in /etc/ipsec.secrets\n"
+    /usr/sbin/ipsec start --nofork
+fi
+touch .run-flag
 read -p "Enter your external IP address: " external_ip
 read -p "Do you want to generate CA and server certificates automatically? (Y/N): " generate_certs
 if [[ $generate_certs == [yY] || $generate_certs == [yY][eE][sS] ]]
